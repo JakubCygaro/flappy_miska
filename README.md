@@ -20,7 +20,7 @@ No to musisz ogarnąć sobie:
 - SDL_mixer
 - SDL_img
 
-no i zbuildować wszystko co jest w `src/` linkując z tymi bibliotekami. Pamiętaj też o flagach `-Wl,-subsystem,windows`. Ja używam MINGW nie wiem jak to będzie wyglądało na kompilatorach innych niż gcc.
+no i zbuildować wszystko co jest w `src/` linkując z tymi bibliotekami. Pamiętaj też o flagach `-Wl,-subsystem,windows`. Ja używam MINGW nie wiem jak to będzie wyglądało na kompilatorach innych niż gcc. No i na końcu cały folder `data` kopiujesz tak żeby był razem z plikiem wykonywalnym gry, inaczej wszystko się wysra. Do tego nie zapomnij też o wsadzeniu tam de-el-eli tych bibliotek.
 
 Nie dałem żadnego build skryptu dlatego, że używałem czystego make w bardzo nieprzenośnej konfiguracji, która działa tylko u mnie na komputerku.
 
