@@ -35,6 +35,7 @@
 #define MISKA_HITBOX_SCALE .2
 #define SPACEBAR_MESSAGE "spcbr_msg"
 #define SCORE "score"
+#define AUTHOR "author"
 #define OBSTACLE_VEL -5
 #define OBSTACLE_SPACING_SCALE 5
 #define OBSTACLE_WIDTH_SCALE 1.1

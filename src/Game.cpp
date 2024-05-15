@@ -199,6 +199,19 @@ void Game::initialize_objects() {
 	score->set_text("0", m_renderer);
 	m_game_objects.emplace(SCORE, std::move(score));
 
+
+	auto authorship = std::make_unique<TextBox>(0, m_window_height,
+		m_window_width / 5, m_window_height / 30,
+		button_font,
+		"Made by Adam Papieros"s,
+		m_renderer);
+	pos = authorship->get_pos();
+	size = authorship->get_size();
+	pos.x += size.x / 2;
+	pos.y -= size.y;
+	authorship->set_pos(pos);
+	authorship->set_font_color({ 0, 0, 0, 0xFF });
+	m_game_objects.emplace(AUTHOR, std::move(authorship));
 }
 
 void Game::run() {
@@ -243,7 +256,7 @@ void Game::draw() {
 	if (m_game_state == Game::State::Death) {
 		m_game_objects[MENU_BUTTON]->draw(m_renderer);
 	}
-
+	m_game_objects[AUTHOR]->draw(m_renderer);
 	SDL_RenderPresent(this->m_renderer);
 }
 
