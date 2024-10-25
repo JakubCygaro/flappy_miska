@@ -18,7 +18,7 @@ public:
 	static Texture load_texture(SDL_Renderer*, const char*);
 	static Texture load_from_font(SDL_Renderer* renderer, Font& font, const char *text, SDL_Color text_color);
 	//Texture(Texture&&) noexcept;
-	//Texture(const Texture&) noexcept;
+	Texture(const Texture&) noexcept;
 	~Texture();
 	int get_width() const;
 	int get_height() const;

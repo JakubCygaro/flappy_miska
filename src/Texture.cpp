@@ -76,13 +76,13 @@ Texture Texture::clone() const {
 	return Texture(m_height, m_width, *m_texture);
 }
 
-//Texture::Texture(Texture&& other) noexcept:
-//	m_height{other.m_height},
-//	m_width{other.m_width},
-//	m_texture{std::move(other.m_texture)}
-//{
-//	other.m_texture = nullptr;
-//}
+Texture::Texture(const Texture& other) noexcept:
+	m_height{other.m_height},
+	m_width{other.m_width},
+	m_texture{other.m_texture}
+{
+
+}
 //
 //Texture::Texture(const Texture& other) noexcept :
 //	m_height{ other.m_height },

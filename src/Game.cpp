@@ -108,7 +108,7 @@ void Game::initialize_objects() {
 	m_textures.emplace(BUTTON_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/button.png")));
 	m_textures.emplace(GROUND_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/ground.png")));
 	m_textures.emplace(SPACEBAR_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/space.png")));
-	//m_textures.emplace(TOOTH_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/zab.png")));
+	m_textures.emplace(TOOTH_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/zab.png")));
 
 	printf("loading music\n");
 	m_sounds[DEATH_SOUND] = load_sound("data/death.wav");
@@ -340,12 +340,15 @@ std::optional<Game::State> Game::update() {
 			m_dist = std::uniform_real_distribution<float>(miska->get_size().x * 2, 250);
 			auto gap = m_dist(m_rng);
 			printf("offset: %f\ngap: %f\n", offset, gap);
+
+			auto tooth_t = m_textures[TOOTH_TEXTURE];
+
 			this->m_obstacles.push_back({ this->m_renderer,
 					gap,
 					(this->m_window_width / 10) * OBSTACLE_WIDTH_SCALE,
 					{ (float)this->m_window_width, 0 },
 					offset,
-					Texture::load_texture(m_renderer, "data/zab.png")});
+					tooth_t});
 		};
 
 		if (m_obstacles.size() < 6) {
