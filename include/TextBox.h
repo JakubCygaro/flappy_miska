@@ -4,6 +4,9 @@
 #include "Texture.h"
 #include <optional>
 #include "Object.h"
+#include "SDL2/SDL.h"
+#include <string>
+
 
 class TextBox : public GameObject
 {

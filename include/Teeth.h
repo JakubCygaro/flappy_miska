@@ -1,9 +1,11 @@
 #ifndef TEETH_H
 #define TEETH_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "Texture.h"
 #include "Vector2.h"
+#include <SDL2/SDL.h>
+#include "Texture.h"
 
 class Teeth
 {

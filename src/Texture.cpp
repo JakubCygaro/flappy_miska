@@ -1,10 +1,5 @@
 #include "Texture.h"
-#include <SDL.h>
-#include <SDL_image.h>
-#include <stdexcept>
-#include <format>
-#include <memory>
-#include "Font.h"
+
 
 Texture Texture::load_texture(SDL_Renderer *renderer, const char *path) {
 	SDL_Texture* new_texture = NULL;
@@ -12,12 +7,12 @@ Texture Texture::load_texture(SDL_Renderer *renderer, const char *path) {
 	if (loaded == NULL) {
 		throw std::runtime_error(std::format("could not load image `{}` . {}", path, IMG_GetError()));
 	}
-	printf("loaded `%s`\n", path);
+	// printf("loaded `%s`\n", path);
 	new_texture = SDL_CreateTextureFromSurface(renderer, loaded);
 	if (new_texture == NULL) {
 		throw std::runtime_error(std::format("could not make texture from image `{}` . {}", path, IMG_GetError()));
 	}
-	printf("created texture from `%s`\n", path);
+	// printf("created texture from `%s`\n", path);
 	Texture ret = Texture(loaded->h, loaded->w, new_texture);
 
 	SDL_FreeSurface(loaded);
@@ -26,7 +21,7 @@ Texture Texture::load_texture(SDL_Renderer *renderer, const char *path) {
 }
 
 Texture Texture::load_from_font(SDL_Renderer* renderer, Font& font, const char* text, SDL_Color text_color) {
-	printf("f_ptr: %p\ntext: %s\n", font.get_font(), text);
+	// printf("f_ptr: %p\ntext: %s\n", font.get_font(), text);
 	SDL_Surface *text_surface = TTF_RenderText_Solid(font.get_font(), text, text_color);
 	if (text_surface == NULL) {
 		throw std::runtime_error(std::format("could not render text surface. {}\n", TTF_GetError()));
@@ -39,7 +34,7 @@ Texture Texture::load_from_font(SDL_Renderer* renderer, Font& font, const char* 
 	Texture ret(text_surface->h, text_surface->w, texture);
 
 	SDL_FreeSurface(text_surface);
-	printf("created texture from font\n");
+	// printf("created texture from font\n");
 	return ret;
 }
 
@@ -68,7 +63,7 @@ Texture::~Texture() {
 		this->m_height = 0;
 		this->m_width = 0;
 		*this->m_texture = NULL;
-		printf("destroyed texture\n");
+		// printf("destroyed texture\n");
 	}
 }
 

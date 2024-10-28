@@ -22,7 +22,7 @@ No to musisz ogarnąć sobie:
 
 no i zbuildować wszystko co jest w `src/` linkując z tymi bibliotekami. Pamiętaj też o flagach `-Wl,-subsystem,windows`. Ja używam MINGW nie wiem jak to będzie wyglądało na kompilatorach innych niż gcc. No i na końcu cały folder `data` kopiujesz tak żeby był razem z plikiem wykonywalnym gry, inaczej wszystko się wysra. Do tego nie zapomnij też o wsadzeniu tam de-el-eli tych bibliotek.
 
-Nie dałem żadnego build skryptu dlatego, że używałem czystego make w bardzo nieprzenośnej konfiguracji, która działa tylko u mnie na komputerku.
+Oryginalnie używałem czystego make w bardzo nieprzenośnej konfiguracji, która działa tylko u mnie na komputerku. Ale teraz dodałem skrypt CMake który działa na moim komputerku i być może zadziała też na twoim. Z czego warto zaznaczyć że build robię pod MinGW z GCC i tam też mam zainstalowanego SDL2 więc nie mam pojęcia jak to będzie wyglądało pod innym setupem i systemem. Tak więc jeśli ten skrypt się wysra to jak najbardziej może być z mojej winy i wyzbywam się wszelkiej odpowiedzialności.
 
 # Czy w boljerze jest bomba?
 

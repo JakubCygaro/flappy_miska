@@ -1,7 +1,10 @@
-#pragma once
-#include <SDL.h>
-#include <SDL_ttf.h>
+#ifndef FONT_H
+#define FONT_H
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <memory>
+#include <stdexcept>
+#include <format>
 
 
 class Font
@@ -19,3 +22,4 @@ public:
 	TTF_Font* get_font() const;
 };
 
+#endif

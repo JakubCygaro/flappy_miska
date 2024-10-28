@@ -1,15 +1,27 @@
 #pragma once
-#include <SDL.h>
 #include <map>
-#include <string>
-#include <optional>
-#include "Object.h"
-#include "Vector2.h"
-#include "Teeth.h"
 #include <vector>
 #include <stack>
 #include <random>
-#include <SDL_mixer.h>
+#include <stdexcept>
+#include <format>
+#include <string>
+#include <optional>
+#include <algorithm>
+#include <chrono>
+#include <math.h>
+
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
+
+#include "Object.h"
+#include "Vector2.h"
+#include "Teeth.h"
+#include "Texture.h"
+#include "Button.h"
+#include "TextBox.h"
 
 #define PLAY_BUTTON "play_button"
 #define MENU_BUTTON "menu_button"

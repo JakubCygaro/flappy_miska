@@ -1,8 +1,4 @@
 #include "Font.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <stdexcept>
-#include <format>
 
 Font::Font(const char* path, int size) :
 	m_size{size}
@@ -13,15 +9,15 @@ Font::Font(const char* path, int size) :
 	}
 	//printf("%s\tNULL: %d\n", path, font == NULL);
 	m_font = std::make_shared<TTF_Font*>(font);
-	printf("Font\n");
+	// printf("Font\n");
 }
 Font::~Font() {
 	if (m_font.use_count() == 1) {
 		TTF_CloseFont(*m_font);
 		*m_font = NULL;
-		printf("closed font\n");
+		// printf("closed font\n");
 	}
-	printf("~Font\n");
+	// printf("~Font\n");
 }
 
 TTF_Font* Font::get_font() const {

@@ -1,11 +1,5 @@
 #include "TextBox.h"
 
-#include "Font.h"
-#include "Texture.h"
-#include <optional>
-#include "Object.h"
-#include "SDL.h"
-#include <string>
 
 TextBox::TextBox(float x, float y, int w, int h, Font f, std::string text, SDL_Renderer *renderer) :
 	GameObject{ x, y, w, h, std::nullopt },

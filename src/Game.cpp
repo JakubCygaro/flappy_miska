@@ -1,19 +1,5 @@
 #include "Game.h"
-#include <stdexcept>
-#include <format>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <map>
-#include <string>
-#include "Texture.h"
-#include "Teeth.h"
-#include <optional>
-#include <algorithm>
-#include <SDL_ttf.h>
-#include "Button.h"
-#include <math.h>
-#include "TextBox.h"
-#include <chrono>
+
 
 using namespace std::literals::string_literals;
 
@@ -103,14 +89,14 @@ void Game::initialize() {
 
 void Game::initialize_objects() {
 
-	printf("loading textures\n");
+	// printf("loading textures\n");
 	m_textures.emplace(MISKA, std::move(Texture::load_texture(m_renderer, "data/miska.png")));
 	m_textures.emplace(BUTTON_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/button.png")));
 	m_textures.emplace(GROUND_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/ground.png")));
 	m_textures.emplace(SPACEBAR_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/space.png")));
 	m_textures.emplace(TOOTH_TEXTURE, std::move(Texture::load_texture(m_renderer, "data/zab.png")));
 
-	printf("loading music\n");
+	// printf("loading music\n");
 	m_sounds[DEATH_SOUND] = load_sound("data/death.wav");
 	m_sounds[DEBIL_SOUND] = load_sound("data/debil.wav");
 	m_sounds[OOO_SOUND] = load_sound("data/o_o_o.wav");
@@ -126,10 +112,10 @@ void Game::initialize_objects() {
 
 	m_theme = Mix_LoadMUS("data/zloto.wav");
 
-	printf("loading background\n");
+	// printf("loading background\n");
 	this->m_backgroud = Texture::load_texture(this->m_renderer, "data/background.png");
 
-	printf("loading objects\n");
+	// printf("loading objects\n");
 	auto txt = m_textures[MISKA].clone();
 	auto miska = std::make_unique<GameObject>(this->m_window_width/6, this->m_window_height/2,
 		txt);
@@ -339,7 +325,7 @@ std::optional<Game::State> Game::update() {
 			auto offset = std::rand() % 2 == 0 ? m_dist(m_rng) : -m_dist(m_rng);
 			m_dist = std::uniform_real_distribution<float>(miska->get_size().x * 2, 250);
 			auto gap = m_dist(m_rng);
-			printf("offset: %f\ngap: %f\n", offset, gap);
+			// printf("offset: %f\ngap: %f\n", offset, gap);
 
 			auto tooth_t = m_textures[TOOTH_TEXTURE];
 
@@ -401,7 +387,7 @@ std::optional<Game::State> Game::update() {
 					Mix_PlayChannel(-1, m_sounds[GAGRI_SOUND], 0);
 				}
 
-				printf("score++\n");
+				// printf("score++\n");
 			}
 			if (front.get_pos().x + front.get_width() < 0) {
 				m_obstacles.erase(m_obstacles.begin());

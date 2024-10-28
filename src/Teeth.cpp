@@ -1,7 +1,5 @@
 #include "Teeth.h"
-#include <SDL.h>
-#include "Texture.h"
-#include "Vector2.h"
+
 
 
 Teeth::Teeth(SDL_Renderer* renderer, Uint32 gap, int tooth_width, Vector2 pos, float gap_offset, Texture tooth_texture) :

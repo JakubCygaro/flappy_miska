@@ -1,10 +1,5 @@
 #include "Button.h"
-#include <string>
-#include <SDL_ttf.h>
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <stdexcept>
-#include <format>
+
 
 Button::Button(float x, float y, int w, int h, std::optional<Texture> texture, std::string text, Font font, SDL_Renderer *r): 
 	GameObject{x, y, w, h, texture},

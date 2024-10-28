@@ -2,3 +2,9 @@
 ./build/**
 ./todo.md
 ./Makefile
+./build2/**
+./*.vcproj*
+./*.sln
+./.vs
+./.vscode
+./todo.md
