@@ -50,3 +50,6 @@ file(
     COPY data
     DESTINATION ${CMAKE_BINARY_DIR}
 )
+
+install(TARGETS Miska DESTINATION bin)
+install(DIRECTORY "${PROJECT_BINARY_DIR}/data" DESTINATION bin)
