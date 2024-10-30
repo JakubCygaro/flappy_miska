@@ -49,11 +49,16 @@ void Game::initialize() {
 	}
 
 	SDL_DisplayMode display;
-	SDL_GetCurrentDisplayMode(0, &display);
+	if (SDL_GetDesktopDisplayMode(0, &display)){
+		throw std::runtime_error("Could not determine the display size\n");
+	}
 	if (display.h < m_window_height)
-		m_window_height -= m_window_height - display.h;
+		//m_window_height -= m_window_height - display.h;
+		m_window_height = 0.5 * display.h;
+	
 	if (display.w < m_window_width)
-		m_window_width -= m_window_width - display.w;
+		//m_window_width -= m_window_width - display.w;
+		m_window_width = 0.67 * display.w;
 
 	this->m_main_window = SDL_CreateWindow("Flappy Miska",
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,

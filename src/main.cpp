@@ -3,9 +3,9 @@
 #include <iostream>
 #include "Game.h"
 
-#define SCREEN_WIDTH 1000
-#define SCREEN_HEIGHT 800
-#define FPS 60
+constexpr int SCREEN_WIDTH = 1000;
+constexpr int SCREEN_HEIGHT = 800;
+constexpr int FPS = 60;
 
 int main(int argc, char** args) {
 	{
