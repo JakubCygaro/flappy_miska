@@ -54,7 +54,7 @@ void Game::initialize() {
 	}
 	if (display.h < m_window_height)
 		//m_window_height -= m_window_height - display.h;
-		m_window_height = 0.5 * display.h;
+		m_window_height = 0.85 * display.h;
 	
 	if (display.w < m_window_width)
 		//m_window_width -= m_window_width - display.w;
