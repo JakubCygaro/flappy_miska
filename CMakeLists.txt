@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.15...3.30)
 
 project(Miska)
-
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "")
+endif()
 # if(CMAKE_CXX_COMPILER_ID NOT STREQUAL "GCC")
     
 # endif()
@@ -23,26 +25,40 @@ find_package(SDL2_ttf REQUIRED)
 # )
 
 #find_library(SDL2 SDL2)
-add_executable(Miska src/main.cpp src/Button.cpp src/Font.cpp src/Game.cpp src/Object.cpp src/Teeth.cpp src/TextBox.cpp src/TextBox.cpp src/Texture.cpp src/Vector2.cpp)
+add_executable(Miska WIN32 
+    src/main.cpp 
+    src/Button.cpp 
+    src/Font.cpp 
+    src/Game.cpp 
+    src/Object.cpp 
+    src/Teeth.cpp 
+    src/TextBox.cpp 
+    src/TextBox.cpp 
+    src/Texture.cpp 
+    src/Vector2.cpp
+)
 #target_link_libraries(Dupa SDL2)
 
 if(WIN32)
     target_compile_options(Miska PRIVATE "-Wl,-subsystem,windows")
-    target_link_libraries(
-        ${PROJECT_NAME}
-        mingw32
-    )
+    if(MINGW)
+        target_link_libraries(
+            ${PROJECT_NAME}
+            mingw32
+        )
+    endif()
 endif()
 
-target_compile_options(Miska PRIVATE -Wall -O2)
+# target_compile_options(Miska 
+#     PRIVATE -Wall -O2
+# )
 
-target_link_libraries(
-    ${PROJECT_NAME}
-        SDL2main
-        SDL2
-        SDL2_image
-        SDL2_mixer
-        SDL2_ttf
+target_link_libraries(${PROJECT_NAME}
+    SDL2main
+    SDL2
+    SDL2_image
+    SDL2_mixer
+    SDL2_ttf
 )
 
 message(STATUS "Copying all assets to destination folder...")

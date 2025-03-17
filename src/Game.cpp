@@ -335,8 +335,8 @@ std::optional<Game::State> Game::update() {
 			auto tooth_t = m_textures[TOOTH_TEXTURE];
 
 			this->m_obstacles.push_back({ this->m_renderer,
-					gap,
-					(this->m_window_width / 10) * OBSTACLE_WIDTH_SCALE,
+					(unsigned int)gap,
+					(int)((this->m_window_width / 10) * OBSTACLE_WIDTH_SCALE),
 					{ (float)this->m_window_width, 0 },
 					offset,
 					tooth_t});
