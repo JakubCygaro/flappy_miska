@@ -49,10 +49,6 @@ if(WIN32)
     endif()
 endif()
 
-# target_compile_options(Miska 
-#     PRIVATE -Wall -O2
-# )
-
 target_link_libraries(${PROJECT_NAME}
     SDL2main
     SDL2
@@ -61,10 +57,14 @@ target_link_libraries(${PROJECT_NAME}
     SDL2_ttf
 )
 
-message(STATUS "Copying all assets to destination folder...")
-file(
-    COPY data
-    DESTINATION ${CMAKE_BINARY_DIR}
+add_custom_target(copyGameData ALL)
+add_custom_command(TARGET copyGameData POST_BUILD
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E echo "Copying gamedata"
+    COMMAND ${CMAKE_COMMAND}
+    ARGS -E copy_directory_if_different
+            ${CMAKE_SOURCE_DIR}/data
+            ${CMAKE_BINARY_DIR}/data
 )
 
 install(TARGETS Miska DESTINATION bin)
