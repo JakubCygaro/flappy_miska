@@ -17,7 +17,7 @@ TextBox::~TextBox(){}
 void TextBox::draw(SDL_Renderer *renderer) const {
 	SDL_FRect rect = {
 		m_x, m_y,
-		m_width, m_height
+		static_cast<float>(m_width), static_cast<float>(m_height)
 	};
 	SDL_SetRenderDrawColor(renderer, m_background_color.r, m_background_color.g, m_background_color.b, SDL_ALPHA_TRANSPARENT);
 	//SDL_RenderFillRectF(renderer, &rect);
