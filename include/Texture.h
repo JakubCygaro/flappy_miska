@@ -6,8 +6,6 @@
 #include "Font.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <stdexcept>
-#include <format>
 
 class Texture
 {
@@ -22,6 +20,7 @@ public:
 	static Texture load_from_font(SDL_Renderer* renderer, Font& font, const char *text, SDL_Color text_color);
 	//Texture(Texture&&) noexcept;
 	Texture(const Texture&) noexcept;
+	Texture& operator=(const Texture&) noexcept;
 	~Texture();
 	int get_width() const;
 	int get_height() const;

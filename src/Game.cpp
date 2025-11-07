@@ -1,4 +1,7 @@
 #include "Game.h"
+#include <chrono>
+#include "Button.h"
+#include "TextBox.h"
 using namespace std::literals::string_literals;
 
 static Mix_Chunk* load_sound(const char* path)
@@ -147,13 +150,13 @@ void Game::initialize_objects()
     menu_button->set_pos(play_pos);
     m_game_objects.insert({ MENU_BUTTON, std::move(menu_button) });
 
-    auto ground_one = GameObject(0, m_window_height - (m_window_height / 18),
+    auto ground_one = GameObject(0, m_window_height - (m_window_height / 18.),
         m_textures[GROUND_TEXTURE].clone());
     auto size = ground_one.get_size();
     ground_one.set_size({ (float)m_window_width, size.y });
     m_ground.emplace_back(std::move(ground_one));
 
-    auto ground_two = GameObject(m_window_width, m_window_height - (m_window_height / 18),
+    auto ground_two = GameObject(m_window_width, m_window_height - (m_window_height / 18.),
         m_textures[GROUND_TEXTURE].clone());
     ground_two.set_size({ (float)m_window_width, size.y });
 
@@ -280,7 +283,7 @@ std::optional<Game::State> Game::update()
     if (m_game_state != Game::State::Death) {
         auto& front = m_ground.front();
         if (front.get_pos().x + front.get_size().x <= 0) {
-            auto ground_two = GameObject(m_window_width, m_window_height - (m_window_height / 18),
+            auto ground_two = GameObject(m_window_width, m_window_height - (m_window_height / 18.),
                 m_textures[GROUND_TEXTURE].clone());
             auto size = front.get_size();
             ground_two.set_size(size);
@@ -333,7 +336,7 @@ std::optional<Game::State> Game::update()
 
             this->m_obstacles.push_back({ this->m_renderer,
                 (unsigned int)gap,
-                (int)((this->m_window_width / 10) * OBSTACLE_WIDTH_SCALE),
+                (int)((this->m_window_width / 10.) * OBSTACLE_WIDTH_SCALE),
                 { (float)this->m_window_width, 0 },
                 offset,
                 tooth_t });
@@ -342,7 +345,7 @@ std::optional<Game::State> Game::update()
         if (m_obstacles.size() < 6) {
             if (m_obstacles.empty()) {
                 add_obstacle();
-            } else if (m_obstacles.back().get_pos().x + m_obstacles.back().get_width() + (m_window_width / 10) * OBSTACLE_SPACING_SCALE <= m_window_width) {
+            } else if (m_obstacles.back().get_pos().x + m_obstacles.back().get_width() + (m_window_width / 10.) * OBSTACLE_SPACING_SCALE <= m_window_width) {
                 add_obstacle();
             }
         }
@@ -360,7 +363,7 @@ std::optional<Game::State> Game::update()
 
         if (!m_obstacles.empty()) {
             auto& front = m_obstacles.front();
-            if (front.get_pos().x + front.get_width() / 2 <= miska->get_pos().x && !m_score_flag) {
+            if (front.get_pos().x + front.get_width() / 2. <= miska->get_pos().x && !m_score_flag) {
                 m_score++;
                 m_score_flag = true;
                 auto score = m_game_objects[SCORE].get();

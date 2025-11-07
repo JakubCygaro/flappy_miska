@@ -4,10 +4,10 @@
 TextBox::TextBox(float x, float y, int w, int h, Font f, std::string text, SDL_Renderer *renderer) :
 	GameObject{ x, y, w, h, std::nullopt },
 	m_font{ f },
-	m_text { text },
-	m_color{ SDL_Color { 0, 0, 0, 255 } },
-	m_background_color { SDL_Color {0, 0, 0, 0} },
-	m_text_texture{ Texture::load_from_font(renderer, m_font, text.c_str(), m_color) }
+    m_color{ SDL_Color { 0, 0, 0, 255 } },
+    m_background_color { SDL_Color {0, 0, 0, 0} },
+	m_text_texture{ Texture::load_from_font(renderer, m_font, text.c_str(), m_color) },
+    m_text { text }
 {
 
 }

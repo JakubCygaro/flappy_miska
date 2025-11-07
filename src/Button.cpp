@@ -40,8 +40,8 @@ void Button::draw(SDL_Renderer* renderer) const {
 	}
 
 	Vector2 text_pos {
-		(rect.x + rect.w / 2) - m_text_texture.get_width() / 2,
-		(rect.y + rect.h / 2) - m_text_texture.get_height() / 2,
+		(rect.x + rect.w / 2) - static_cast<float>(m_text_texture.get_width() / 2.),
+		(rect.y + rect.h / 2) - static_cast<float>(m_text_texture.get_height() / 2.),
 	};
 
 	rect = {

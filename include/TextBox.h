@@ -4,7 +4,6 @@
 #include "Texture.h"
 #include <optional>
 #include "Object.h"
-#include "SDL2/SDL.h"
 #include <string>
 
 
@@ -12,9 +11,9 @@ class TextBox : public GameObject
 {
 private:
 	Font m_font;
+    SDL_Color m_color, m_background_color;
 	Texture m_text_texture;
 	std::string m_text;
-	SDL_Color m_color, m_background_color;
 public:
 	TextBox(float x, float y, int w, int h, Font f, std::string text,  SDL_Renderer*);
 	TextBox(const TextBox&) = delete;
