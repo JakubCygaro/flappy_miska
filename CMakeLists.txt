@@ -1,32 +1,20 @@
 cmake_minimum_required(VERSION 3.15...3.30)
 
 project(Miska)
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE Debug CACHE STRING "")
-endif()
 
+set(BUILD_TYPES Debug Release)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_EXPORT_COMPILE_COMMANDS YES)
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
-)
-find_package(OpenGL REQUIRED)
-
-if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(USE_FLAGS "-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s USE_SDL_MIXER=2 ")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS} --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/data")
-    set(CMAKE_EXECUTABLE_SUFFIX ".html")
-else()
-    find_package(SDL2 REQUIRED)
-    find_package(SDL2_image REQUIRED)
-    find_package(SDL2_mixer REQUIRED)
-    find_package(SDL2_ttf REQUIRED)
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-add_executable(Miska WIN32
+if(NOT (${CMAKE_BUILD_TYPE} IN_LIST BUILD_TYPES))
+    message(FATAL_ERROR "Unknown build type " ${CMAKE_BUILD_TYPE})
+endif()
+
+add_executable(Miska
     src/main.cpp
     src/Button.cpp
     src/Font.cpp
@@ -39,26 +27,53 @@ add_executable(Miska WIN32
     src/Vector2.cpp
 )
 
-include_directories(
-    ${SDL2_INCLUDE_DIRS}
+target_include_directories(Miska
+    PRIVATE ${PROJECT_SOURCE_DIR}/include
 )
 
-if(WIN32)
-    target_compile_options(Miska PRIVATE "-Wl,-subsystem,windows")
-    if(MINGW)
-        target_link_libraries(
-            ${PROJECT_NAME}
-            mingw32
-        )
-    endif()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+    set(USE_FLAGS "-s GL_ENABLE_GET_PROC_ADDRESS=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS=png -s USE_LIBPNG=1 -s USE_SDL_TTF=2 -s USE_SDL_MIXER=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
+    set_target_properties(Miska PROPERTIES SUFFIX ".html")
+    set(CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS} -sNO_DISABLE_EXCEPTION_CATCHING -s ASYNCIFY -s TOTAL_STACK=64MB -s INITIAL_MEMORY=128MB --preload-file ./data"
+    )
+
+    set_target_properties(Miska
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/website"
+    )
+else()
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_image REQUIRED)
+    find_package(SDL2_mixer REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+    set_target_properties(Miska
+        PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/game"
+    )
 endif()
+
+target_compile_options(Miska
+    PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    PRIVATE $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra>
+)
+
+target_compile_options(Miska
+    PRIVATE $<$<AND:$<NOT:$<CXX_COMPILER_ID:MSVC>>,$<PLATFORM_ID:WIN32>,$<CONFIG:Release>>:-Wl,-subsystem,windows>
+)
+
+target_link_libraries(Miska
+    PRIVATE $<$<PLATFORM_ID:MSYS>: mingw32>
+)
+
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-target_link_libraries(${PROJECT_NAME}
-    SDL2main
-    SDL2
-    SDL2_image
-    SDL2_mixer
-    SDL2_ttf
+    target_link_libraries(Miska
+        PRIVATE SDL2::SDL2
+        PRIVATE SDL2_image::SDL2_image
+        PRIVATE SDL2_mixer::SDL2_mixer
+        PRIVATE SDL2_ttf::SDL2_ttf
 )
 endif()
 
@@ -69,9 +84,13 @@ add_custom_command(TARGET copyGameData POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     ARGS -E copy_directory_if_different
             ${CMAKE_SOURCE_DIR}/data
-            ${CMAKE_BINARY_DIR}/data
+            $<TARGET_FILE_DIR:Miska>/data
 )
 
+include(GNUInstallDirs)
 
-install(TARGETS Miska DESTINATION bin)
-install(DIRECTORY "${PROJECT_BINARY_DIR}/data" DESTINATION bin)
+install(TARGETS Miska
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(DIRECTORY "${PROJECT_BINARY_DIR}/data" DESTINATION ${CMAKE_INSTALL_BINDIR})
+
