@@ -1,0 +1,26 @@
+body {
+    background-color: #1f1f1f;
+    color: whitesmoke;
+}
+
+header h1 {
+    font-size: 40px;
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    text-justify: inter-word;
+}
+
+footer p {
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
+    font-style: italic;
+    color: whitesmoke;
+}
+a:hover {
+    color: gray;
+}
+

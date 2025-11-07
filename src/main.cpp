@@ -6,10 +6,12 @@
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
-#endif
-
+constexpr int SCREEN_WIDTH = 800;
+constexpr int SCREEN_HEIGHT = 600;
+#else
 constexpr int SCREEN_WIDTH = 1000;
 constexpr int SCREEN_HEIGHT = 800;
+#endif
 constexpr int FPS = 60;
 
 void game_loop(void)
@@ -26,7 +28,7 @@ void game_loop(void)
     SDL_Quit();
 }
 
-int main(int argc, char** args)
+int main(void)
 {
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(game_loop, 0, 1);

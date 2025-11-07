@@ -2,11 +2,11 @@
 
 
 
-Teeth::Teeth(SDL_Renderer* renderer, Uint32 gap, int tooth_width, Vector2 pos, float gap_offset, Texture tooth_texture) :
+Teeth::Teeth(SDL_Renderer* , Uint32 gap, int tooth_width, Vector2 pos, float gap_offset, Texture tooth_texture) :
 	m_gap { gap },
 	m_texture { tooth_texture },
-	m_tooth_width { tooth_width },
 	m_pos { pos },
+    m_tooth_width { tooth_width },
 	m_gap_offset { gap_offset }
 {
 

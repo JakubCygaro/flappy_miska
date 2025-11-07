@@ -32,18 +32,52 @@ target_include_directories(Miska
 )
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
-    set(USE_FLAGS "-s GL_ENABLE_GET_PROC_ADDRESS=1 -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s SDL2_IMAGE_FORMATS=png -s USE_LIBPNG=1 -s USE_SDL_TTF=2 -s USE_SDL_MIXER=2")
+    set(USE_FLAGS "\
+        -s GL_ENABLE_GET_PROC_ADDRESS=1\
+        -s USE_SDL=2\
+        -s USE_SDL_IMAGE=2\
+        -s SDL2_IMAGE_FORMATS=png\
+        -s USE_LIBPNG=1\
+        -s USE_SDL_TTF=2\
+        -s USE_SDL_MIXER=2\
+        -fsanitize=undefined \
+        "
+    )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${USE_FLAGS}")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${USE_FLAGS}")
-    set_target_properties(Miska PROPERTIES SUFFIX ".html")
-    set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} ${USE_FLAGS} -sNO_DISABLE_EXCEPTION_CATCHING -s ASYNCIFY -s TOTAL_STACK=64MB -s INITIAL_MEMORY=128MB --preload-file ./data"
-    )
 
+    set_target_properties(Miska PROPERTIES SUFFIX ".html")
+
+    set(shellHtml ${CMAKE_SOURCE_DIR}/web/shell.html)
+
+    set(CMAKE_EXE_LINKER_FLAGS "\
+        ${CMAKE_EXE_LINKER_FLAGS} \
+        ${USE_FLAGS} \
+        -s ASYNCIFY \
+        -s TOTAL_STACK=64MB \
+        -s INITIAL_MEMORY=128MB \
+        -s NO_DISABLE_EXCEPTION_CATCHING \
+        --use-preload-plugins \
+        --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/data@/data \
+        --shell-file ${shellHtml}"
+    )
     set_target_properties(Miska
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/website"
     )
+    set_property(TARGET Miska
+        APPEND PROPERTY LINK_DEPENDS ${shellHtml}
+    )
+    add_custom_target(copy_styles ALL
+        DEPENDS ${CMAKE_SOURCE_DIR}/web/styles.css
+    )
+    add_custom_command(TARGET copy_styles
+        PRE_BUILD
+        COMMAND cmake
+        ARGS -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/web/styles.css
+            $<TARGET_FILE_DIR:Miska>/
+        )
 else()
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)

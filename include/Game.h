@@ -90,7 +90,6 @@ private:
 	std::optional<Texture> m_backgroud;
 	Uint64 m_delta_time;
 	const float m_fps;
-	const float m_fps_cap;
 	Vector2 m_miska_vel;
 	std::vector<Teeth> m_obstacles;
 	State m_game_state;

@@ -1,21 +1,21 @@
 #include "Object.h"
 
 GameObject::GameObject(float x, float y, int w, int h, std::optional<Texture> texture) :
-	m_x{x},
-	m_y{y},
-	m_width{w},
-	m_height{h},
 	m_texture{texture},
+    m_x{x},
+    m_y{y},
+    m_width{w},
+    m_height{h},
 	m_collison{(float)w, (float)h}
 {
 
 }
 GameObject::GameObject(float x, float y, Texture texture) : 
+    m_texture{texture},
 	m_x{x},
 	m_y{y},
 	m_width{texture.get_width()},
 	m_height{texture.get_height()},
-	m_texture{texture},
 	m_collison{ (float)texture.get_width(), (float)texture.get_height()}
 {
 
