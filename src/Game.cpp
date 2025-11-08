@@ -1,7 +1,22 @@
 #include "Game.h"
-#include <chrono>
 #include "Button.h"
 #include "TextBox.h"
+#include <chrono>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+
+EM_JS(void, register_game, (), {
+    registerGameImpl();
+});
+
+EM_JS(void, upload_score, (int score), {
+    console.log("o chuj ci chodzi");
+    uploadScoreImpl(score);
+});
+
+#endif
+
 using namespace std::literals::string_literals;
 
 static Mix_Chunk* load_sound(const char* path)
@@ -67,7 +82,7 @@ void Game::initialize()
     if (this->m_main_window == NULL) {
         throw std::runtime_error(std::format("could not create main window {}\n", SDL_GetError()));
     }
-    this->m_renderer = SDL_CreateRenderer(this->m_main_window, -1, SDL_RENDERER_ACCELERATED );
+    this->m_renderer = SDL_CreateRenderer(this->m_main_window, -1, SDL_RENDERER_ACCELERATED);
 
     if (this->m_renderer == NULL) {
         throw std::runtime_error(std::format("could not create renderer {}\n", SDL_GetError()));
@@ -323,6 +338,9 @@ std::optional<Game::State> Game::update()
         if (miska->get_pos().y > m_window_height) {
             m_miska_vel = { 0, 0 };
             Mix_PlayChannel(-1, m_sounds[DEBIL_SOUND], 0);
+#ifdef __EMSCRIPTEN__
+            upload_score(this->m_score);
+#endif
             return Game::State::Death;
         }
 
@@ -357,6 +375,9 @@ std::optional<Game::State> Game::update()
             if (obstacle.check_collision(miska->get_collider(), { (float)m_window_width, (float)m_window_height })) {
                 m_miska_vel = { 0, 0 };
                 Mix_PlayChannel(-1, m_sounds[DEATH_SOUND], 0);
+#ifdef __EMSCRIPTEN__
+                upload_score(this->m_score);
+#endif
                 return Game::State::Death;
             }
         }
@@ -386,7 +407,6 @@ std::optional<Game::State> Game::update()
                 } else {
                     Mix_PlayChannel(-1, m_sounds[GAGRI_SOUND], 0);
                 }
-
             }
             if (front.get_pos().x + front.get_width() < 0) {
                 m_obstacles.erase(m_obstacles.begin());
@@ -409,6 +429,9 @@ std::optional<Game::State> Game::keyboard_input(KeyEventData data)
     }
     if (data.kind == Kind::KeyUp && data.keysym.sym == SDLK_SPACE && m_game_state == Game::State::Readyup) {
         Mix_HaltChannel(-1);
+#ifdef __EMSCRIPTEN__
+        register_game();
+#endif
         return Game::State::Playing;
     }
     return std::nullopt;

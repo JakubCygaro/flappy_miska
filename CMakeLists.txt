@@ -68,14 +68,20 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     set_property(TARGET Miska
         APPEND PROPERTY LINK_DEPENDS ${shellHtml}
     )
-    add_custom_target(copy_styles ALL
+    add_custom_target(copyWebData
+        ALL
         DEPENDS ${CMAKE_SOURCE_DIR}/web/styles.css
+        DEPENDS ${CMAKE_SOURCE_DIR}/web/scripts.js
     )
-    add_custom_command(TARGET copy_styles
+    add_custom_command(TARGET copyWebData
         PRE_BUILD
         COMMAND cmake
         ARGS -E copy_if_different
             ${CMAKE_SOURCE_DIR}/web/styles.css
+            $<TARGET_FILE_DIR:Miska>/
+        COMMAND cmake
+        ARGS -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/web/scripts.js
             $<TARGET_FILE_DIR:Miska>/
         )
 else()
