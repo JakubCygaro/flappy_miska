@@ -11,6 +11,12 @@ header h1 {
     text-justify: inter-word;
 }
 
+footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}
+
 footer p {
     text-align: center;
 }

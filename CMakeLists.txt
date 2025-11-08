@@ -108,18 +108,17 @@ if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
         PRIVATE SDL2_image::SDL2_image
         PRIVATE SDL2_mixer::SDL2_mixer
         PRIVATE SDL2_ttf::SDL2_ttf
-)
+        )
+    add_custom_target(copyGameData ALL)
+    add_custom_command(TARGET copyGameData POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E echo "Copying gamedata"
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy_directory_if_different
+                ${CMAKE_SOURCE_DIR}/data
+                $<TARGET_FILE_DIR:Miska>/data
+        )
 endif()
-
-add_custom_target(copyGameData ALL)
-add_custom_command(TARGET copyGameData POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E echo "Copying gamedata"
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory_if_different
-            ${CMAKE_SOURCE_DIR}/data
-            $<TARGET_FILE_DIR:Miska>/data
-)
 
 include(GNUInstallDirs)
 
