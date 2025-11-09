@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="styles.css">
     <script src="scripts.js"></script>
-    <title>Emscripten-Generated Code</title>
+    <title>Flappy Miśka</title>
     <style>
         .emscripten {
             padding-right: 0;
@@ -101,9 +101,29 @@
     <div class="emscripten">
         <progress value="0" max="100" id="progress" hidden=1></progress>
     </div>
-    <input type="text" id="username-input" value="Ryszard"></input>
-    <div>
-        <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+    <div class="main-content">
+        <div class="left">
+            <form>
+                <label for="username-input">Username:</label><br>
+                <input id="username-input" type="text" id="username-input" value="Ryszard" maxlength="30"
+                    minlength="5"></input>
+            </form>
+        </div>
+        <div class="center">
+            <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=0></canvas>
+        </div>
+        <div class="right">
+            <div class="leaderboard-box">
+                <h2>Leaderboard</h2>
+                <table id="leaderboard">
+                    <tr>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
+                    <tbody id="leaderboard-body"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
     <script type='text/javascript'>
         var statusElement = document.getElementById('status');
@@ -169,6 +189,10 @@
                 if (text) console.error('[post-exception status] ' + text);
             };
         };
+        if (!Module.preRun) Module.preRun = [];
+        Module.preRun.push(function () {
+            ENV.SDL_EMSCRIPTEN_KEYBOARD_ELEMENT = "#canvas";
+        });
     </script>
     {{{ SCRIPT }}}
     <hr>

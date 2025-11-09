@@ -24,3 +24,49 @@ a:hover {
     color: gray;
 }
 
+.main-content {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: center;
+}
+.main-content .center {
+    flex: 1;
+    flex-shrink: 0;
+}
+.main-content .left {
+    text-align: center;
+    flex: 1;
+}
+.main-content .left form input[type="text"] {
+    resize: none;
+    background-color: #1f1f1f;
+    border-color: whitesmoke;
+    border-radius: 10px !important;
+    border: solid 1px whitesmoke !important;
+    color: whitesmoke;
+    font-size: large;
+}
+.main-content .right {
+    flex: 1;
+}
+.main-content .right .leaderboard-box {
+    margin: auto;
+    width: 50%;
+    border: dashed whitesmoke;
+    border-radius: 5q;
+}
+.main-content .right h2 {
+    text-align: center;
+}
+.main-content .right table {
+    border-radius: 5q;
+    margin: auto;
+    width: 100%;
+}
+.main-content .right th, td {
+    text-align: center;
+    padding: 5px;
+    margin: 5px;
+}
+

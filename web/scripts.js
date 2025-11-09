@@ -12,7 +12,7 @@ const registerGameImpl = async () => {
     if (response.ok) {
         console.log("got session cookie")
     } else {
-        console.error("something fucked up")
+        console.error("failed to register game start")
     }
 }
 
@@ -45,9 +45,7 @@ const uploadScoreImpl = async (score) => {
         })
     })
     if (response.ok) {
-        console.log("score uploaded")
-    } else {
-        console.error("something fucked up2")
+        await fetchLeaderboard();
     }
 }
 const setOrGetPersonalBestImpl = (score) => {
@@ -63,3 +61,29 @@ const setOrGetPersonalBestImpl = (score) => {
     }
 }
 
+const fetchLeaderboard = async () => {
+    let leaderboard_body = document.getElementById("leaderboard-body")
+
+    const response = await fetch(API_ADDRESS_PORT + "/top_scores?amount=10", {
+        method: "GET",
+    })
+    if (response.ok) {
+        const scores = JSON.parse(await response.text());
+        if (scores.type !== "ScoreListResponse") {
+            console.error("expected ScoreListResponse, got something different")
+            return;
+        }
+        leaderboard_body.innerHTML = ""
+        for (const s of scores.scores) {
+            leaderboard_body.innerHTML += `<tr><td>${s.username}</td><td>${s.score}</td></tr>`
+        }
+    } else {
+        console.error("error while trying to fetch leaderboard, got response:")
+        console.error(response.body)
+    }
+
+}
+
+window.onload = (_) => {
+    fetchLeaderboard();
+}
