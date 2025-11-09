@@ -106,8 +106,10 @@
             <form>
                 <label for="username-input">Username:</label><br>
                 <input id="username-input" type="text" id="username-input" value="Ryszard" maxlength="30"
-                    minlength="5"></input>
+                minlength="5" oninput="validateUsername()"></input><span style="margin-left: 5px;" id="validation-result"></span>
             </form>
+            <p id="upload-error"></p>
+            <p id="upload-success" style="color: violet;" >Score submitted!</p>
         </div>
         <div class="center">
             <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=0></canvas>
@@ -203,6 +205,7 @@
             ©
             <a href="https://jakubcygaro.github.io/">Adam Papieros</a>
             2025
+            <a href="https://github.com/JakubCygaro/flappy_miska.git">Source</a>
         </p>
     </footer>
 </body>

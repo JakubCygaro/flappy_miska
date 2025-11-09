@@ -38,6 +38,10 @@ a:hover {
     text-align: center;
     flex: 1;
 }
+.main-content .left p[id="upload-error"] {
+    text-align: center;
+    color: red;
+}
 .main-content .left form input[type="text"] {
     resize: none;
     background-color: #1f1f1f;
