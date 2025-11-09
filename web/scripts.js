@@ -1,5 +1,6 @@
 const API_ADDRESS_PORT = "http://127.0.0.1:8080"
 const MISKA_PERSONAL_BEST_LOCAL_STORAGE_VAR = "miskaPersonalBest"
+const LEADERBOARD_FETCH_AMOUNT = 15
 
 const registerGameImpl = async () => {
     const response = await fetch(API_ADDRESS_PORT + "/register_game", {
@@ -64,7 +65,7 @@ const setOrGetPersonalBestImpl = (score) => {
 const fetchLeaderboard = async () => {
     let leaderboard_body = document.getElementById("leaderboard-body")
 
-    const response = await fetch(API_ADDRESS_PORT + "/top_scores?amount=10", {
+    const response = await fetch(API_ADDRESS_PORT + `/top_scores?amount=${LEADERBOARD_FETCH_AMOUNT}`, {
         method: "GET",
     })
     if (response.ok) {
@@ -74,8 +75,9 @@ const fetchLeaderboard = async () => {
             return;
         }
         leaderboard_body.innerHTML = ""
+        let i = 1;
         for (const s of scores.scores) {
-            leaderboard_body.innerHTML += `<tr><td>${s.username}</td><td>${s.score}</td></tr>`
+            leaderboard_body.innerHTML += `<tr><td>${i++}.</td><td>${s.username}</td><td>${s.score}</td></tr>`
         }
     } else {
         console.error("error while trying to fetch leaderboard, got response:")
@@ -86,4 +88,6 @@ const fetchLeaderboard = async () => {
 
 window.onload = (_) => {
     fetchLeaderboard();
+    let username_input = document.getElementById("username-input")
+    username_input.value = `Ryszard${Math.floor((Math.random() * 10000) % 10000)}`
 }
