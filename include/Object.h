@@ -16,8 +16,6 @@ protected:
 public:
 	GameObject(float x, float y, int w, int h, std::optional<Texture> texture);
 	GameObject(float x, float y, Texture texture);
-	//GameObject(GameObject&&) noexcept;
-	//GameObject(const GameObject&);
 	virtual ~GameObject();
 	virtual void draw(SDL_Renderer*) const;
 	virtual const std::optional<Texture>& get_texture() const;
@@ -29,5 +27,7 @@ public:
 	virtual SDL_FRect get_collider() const;
 	virtual void set_collision_size(Vector2);
 	virtual Vector2 get_collision_size() const;
+    static bool point_collision(const GameObject& obj, const Vector2& point);
+    static bool point_collision(const GameObject* obj, const Vector2& point);
 };
 

@@ -94,8 +94,8 @@ GameObject::~GameObject(){}
 
 SDL_FRect GameObject::get_collider() const {
 	SDL_FRect ret {
-		.x = (m_x + m_width / 2) - (m_collison.x / 2),
-		.y = (m_y + m_height / 2) - (m_collison.y / 2),
+		.x = static_cast<float>(m_x + m_width / 2.) - static_cast<float>(m_collison.x / 2.),
+		.y = static_cast<float>(m_y + m_height / 2.) - static_cast<float>(m_collison.y / 2.),
 		.w = m_collison.x, .h = m_collison.y
 	};
 	return ret;
@@ -107,4 +107,11 @@ void GameObject::set_collision_size(Vector2 sz) {
 Vector2 GameObject::get_collision_size() const {
 	return m_collison;
 }
-
+bool GameObject::point_collision(const GameObject& obj, const Vector2& point){
+    auto rect = obj.get_rect();
+    return point.x >= rect.x && point.x <= rect.x + rect.w && point.y >= rect.y && point.y <= rect.y + rect.h;
+}
+bool GameObject::point_collision(const GameObject* obj, const Vector2& point){
+    auto rect = obj->get_rect();
+    return point.x >= rect.x && point.x <= rect.x + rect.w && point.y >= rect.y && point.y <= rect.y + rect.h;
+}

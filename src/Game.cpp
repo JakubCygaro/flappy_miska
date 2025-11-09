@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Button.h"
 #include "TextBox.h"
+#include "Vector2.h"
 #include <chrono>
 
 #ifdef __EMSCRIPTEN__
@@ -10,9 +11,16 @@ EM_JS(void, register_game, (), {
     registerGameImpl();
 });
 
+EM_JS(void, register_game_end, (), {
+    registerGameEndImpl();
+});
+
 EM_JS(void, upload_score, (int score), {
-    console.log("o chuj ci chodzi");
     uploadScoreImpl(score);
+});
+
+EM_JS(int, set_or_get_personal_best, (int score), {
+    return setOrGetPersonalBestImpl(score);
 });
 
 #endif
@@ -191,8 +199,8 @@ void Game::initialize_objects()
         "1"s,
         m_renderer);
     pos = score->get_pos();
-    size = score->get_size();
-    pos.x -= size.x / 2;
+    auto score_size = score->get_size();
+    pos.x -= score_size.x / 2;
     score->set_pos(pos);
     score->set_background_color({ 0xFF, 0, 0, 0xFF });
     score->set_font_color({ 0, 0, 0, 0xFF });
@@ -212,6 +220,52 @@ void Game::initialize_objects()
     authorship->set_pos(pos);
     authorship->set_font_color({ 0, 0, 0, 0xFF });
     m_game_objects.emplace(AUTHOR, std::move(authorship));
+#else
+    auto best_text = std::make_unique<TextBox>(m_window_width / 2, m_window_height / 10,
+        m_window_width / 10, m_window_height / 10,
+        button_font,
+        "0"s,
+        m_renderer);
+    auto best_text_pos = best_text->get_pos();
+    auto best_text_size = best_text->get_size();
+    best_text_pos.x -= best_text_size.x / 2;
+    best_text_pos.y += score_size.y * 1.5;
+    best_text->set_pos(best_text_pos);
+    best_text->set_background_color({ 0xFF, 0, 0, 0xFF });
+    best_text->set_font_color({ 0, 0, 0, 0xFF });
+    best_text->set_text("BEST", m_renderer);
+    m_game_objects.emplace(BEST_TEXT, std::move(best_text));
+
+    auto personal_top_score = std::make_unique<TextBox>(m_window_width / 2, m_window_height / 10,
+        m_window_width / 10, m_window_height / 10,
+        button_font,
+        "-1"s,
+        m_renderer);
+    pos = personal_top_score->get_pos();
+    size = personal_top_score->get_size();
+    pos.x -= size.x / 2;
+    pos.y = best_text_pos.y;
+    pos.y += best_text_size.y * 1.1;
+    personal_top_score->set_pos(pos);
+    personal_top_score->set_background_color({ 0xFF, 0, 0, 0xFF });
+    personal_top_score->set_font_color({ 0, 0, 0, 0xFF });
+    personal_top_score->set_text("-1", m_renderer);
+    m_game_objects.emplace(PERSONAL_TOP_SCORE, std::move(personal_top_score));
+
+    auto menu_btn_pos = m_game_objects[MENU_BUTTON]->get_pos();
+    auto upload_score_btn = std::make_unique<Button>((float)m_window_width / 2, ((float)m_window_height / 5) * 4,
+        m_window_width / 3, m_window_height / 10,
+        m_textures[BUTTON_TEXTURE].clone(),
+        "Upload Score"s,
+        button_font,
+        m_renderer);
+    upload_score_btn->set_font_color({ 0, 0, 0, 255 }, m_renderer);
+    size = upload_score_btn->get_size();
+    auto upload_score_btn_pos = upload_score_btn->get_pos();
+    upload_score_btn_pos.y = menu_btn_pos.y - size.y * 1.15;
+    upload_score_btn_pos.x -= size.x / 2.;
+    upload_score_btn->set_pos(upload_score_btn_pos);
+    m_game_objects.insert({ UPLOAD_SCORE_BUTTON, std::move(upload_score_btn) });
 #endif
 }
 
@@ -259,6 +313,11 @@ void Game::draw()
     }
     if (m_game_state == Game::State::Death) {
         m_game_objects[MENU_BUTTON]->draw(m_renderer);
+#ifdef __EMSCRIPTEN__
+        m_game_objects[UPLOAD_SCORE_BUTTON]->draw(m_renderer);
+        m_game_objects[BEST_TEXT]->draw(m_renderer);
+        m_game_objects[PERSONAL_TOP_SCORE]->draw(m_renderer);
+#endif
     }
 #ifndef __EMSCRIPTEN__
     m_game_objects[AUTHOR]->draw(m_renderer);
@@ -339,7 +398,9 @@ std::optional<Game::State> Game::update()
             m_miska_vel = { 0, 0 };
             Mix_PlayChannel(-1, m_sounds[DEBIL_SOUND], 0);
 #ifdef __EMSCRIPTEN__
-            upload_score(this->m_score);
+            register_game_end();
+            int best = set_or_get_personal_best(this->m_score);
+            dynamic_cast<TextBox*>(m_game_objects[PERSONAL_TOP_SCORE].get())->set_text(std::to_string(best), m_renderer);
 #endif
             return Game::State::Death;
         }
@@ -376,7 +437,9 @@ std::optional<Game::State> Game::update()
                 m_miska_vel = { 0, 0 };
                 Mix_PlayChannel(-1, m_sounds[DEATH_SOUND], 0);
 #ifdef __EMSCRIPTEN__
-                upload_score(this->m_score);
+                register_game_end();
+                int best = set_or_get_personal_best(this->m_score);
+                dynamic_cast<TextBox*>(m_game_objects[PERSONAL_TOP_SCORE].get())->set_text(std::to_string(best), m_renderer);
 #endif
                 return Game::State::Death;
             }
@@ -446,11 +509,11 @@ std::optional<Game::State> Game::mouse_input(MouseEventData data)
 
     int mouse_x, mouse_y;
     SDL_GetMouseState(&mouse_x, &mouse_y);
+    Vector2 mouse = { .x = static_cast<float>(mouse_x), .y = static_cast<float>(mouse_y) };
     auto& play_button = m_game_objects[PLAY_BUTTON];
-    auto play_button_rect = play_button->get_rect();
-    auto menu_button_rect = m_game_objects[MENU_BUTTON]->get_rect();
+    auto& menu_button = m_game_objects[MENU_BUTTON];
 
-    if (m_game_state == Game::State::Menu && data.kind == Kind::ButtonUp && mouse_x >= play_button_rect.x && mouse_x <= play_button_rect.x + play_button_rect.w && mouse_y >= play_button_rect.y && mouse_y <= play_button_rect.y + play_button_rect.h) {
+    if (m_game_state == Game::State::Menu && data.kind == Kind::ButtonUp && GameObject::point_collision(play_button.get(), mouse)) {
         m_game_objects[MISKA]->set_pos({ (float)this->m_window_width / 6, (float)this->m_window_height / 2 });
         m_sin = .0;
         Mix_HaltMusic();
@@ -458,7 +521,7 @@ std::optional<Game::State> Game::mouse_input(MouseEventData data)
         return Game::State::Readyup;
     }
 
-    if (m_game_state == Game::State::Death && data.kind == Kind::ButtonUp && mouse_x >= menu_button_rect.x && mouse_x <= menu_button_rect.x + menu_button_rect.w && mouse_y >= menu_button_rect.y && mouse_y <= menu_button_rect.y + menu_button_rect.h) {
+    if (m_game_state == Game::State::Death && data.kind == Kind::ButtonUp && GameObject::point_collision(menu_button.get(), mouse)) {
         m_game_objects[MISKA]->set_pos({ (float)this->m_window_width / 6, (float)this->m_window_height / 2 });
         m_sin = .0;
         m_obstacles.clear();
@@ -470,6 +533,12 @@ std::optional<Game::State> Game::mouse_input(MouseEventData data)
         Mix_HaltChannel(-1);
         return Game::State::Menu;
     }
+#ifdef __EMSCRIPTEN__
+    auto& upload_button = m_game_objects[UPLOAD_SCORE_BUTTON];
+    if (m_game_state == Game::State::Death && data.kind == Kind::ButtonUp && GameObject::point_collision(upload_button.get(), mouse)) {
+        upload_score(this->m_score);
+    }
+#endif
     return std::nullopt;
 }
 

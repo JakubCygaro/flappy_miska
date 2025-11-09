@@ -48,11 +48,14 @@ void Button::draw(SDL_Renderer* renderer) const {
 		.x = text_pos.x, .y = text_pos.y,
 		.w = (float)m_text_texture.get_width(), .h = (float)m_text_texture.get_height()
 	};
-	if (m_text_texture.get_texture() == NULL) {
-		printf("NO KURWA\n");
-	}
 	SDL_RenderCopyF(renderer, m_text_texture.get_texture(), NULL, &rect);
 
+}
+void Button::set_width(const float& w){
+    m_width = w;
+}
+void Button::set_height(const float& h){
+    m_height = h;
 }
 
 void Button::set_back_color(SDL_Color col) {
