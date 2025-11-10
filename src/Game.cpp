@@ -2,6 +2,7 @@
 #include "Button.h"
 #include "TextBox.h"
 #include "Vector2.h"
+#include <SDL2/SDL_timer.h>
 #include <chrono>
 
 #ifdef __EMSCRIPTEN__
@@ -22,6 +23,10 @@ EM_JS(void, upload_score, (int score), {
 EM_JS(int, set_or_get_personal_best, (int score), {
     return setOrGetPersonalBestImpl(score);
 });
+
+EM_JS(void, heartbeat, (), {
+    heartbeatImpl();
+})
 
 #endif
 
@@ -475,6 +480,14 @@ std::optional<Game::State> Game::update()
                 m_obstacles.erase(m_obstacles.begin());
                 m_score_flag = false;
             }
+#ifdef __EMSCRIPTEN__
+            static Uint64 last_heartbeat = 0;
+            Uint64 current_frame = SDL_GetTicks64();
+            if (current_frame - last_heartbeat >= 1000 * 60 * 1) {
+                last_heartbeat = current_frame;
+                heartbeat();
+            }
+#endif
         }
     } break;
     default:

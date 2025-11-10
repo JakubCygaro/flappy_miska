@@ -1,11 +1,13 @@
 const API_ADDRESS_PORT = "http://127.0.0.1:8080"
 const MISKA_PERSONAL_BEST_LOCAL_STORAGE_VAR = "miskaPersonalBest"
+const MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR = "miskaDefaultUsername"
 const LEADERBOARD_FETCH_AMOUNT = 15
 
 var upload_error = null;
 var upload_success = null;
 var username = null;
 var validation_result = null;
+var validation_tooltip = null;
 
 const registerGameImpl = async () => {
     const response = await fetch(API_ADDRESS_PORT + "/register_game", {
@@ -53,6 +55,9 @@ const uploadScoreImpl = async (score) => {
     })
     if (response.ok) {
         upload_success.hidden = false;
+        setTimeout(async () => {
+            upload_success.hidden = true;
+        }, 1000)
         await fetchLeaderboard();
     } else {
         const body = JSON.parse(await response.text())
@@ -63,8 +68,25 @@ const uploadScoreImpl = async (score) => {
         if (body.kind === "validation") {
             upload_error.innerText = body.message
         }
+        if (body.kind === "unregistered-game-start") {
+            upload_error.innerText = "you must start a new game"
+        }
     }
 }
+
+const heartbeatImpl = async () => {
+    const response = await fetch(API_ADDRESS_PORT + "/heartbeat", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    if (!response.ok) {
+        console.error("heartbeat failed")
+    }
+}
+
 const setOrGetPersonalBestImpl = (score) => {
     let storage = window.localStorage;
     const storagePersonalBest = Number.parseInt(storage.getItem(MISKA_PERSONAL_BEST_LOCAL_STORAGE_VAR))
@@ -108,9 +130,28 @@ window.onload = (_) => {
     upload_success = document.getElementById("upload-success")
     username = document.getElementById("username-input")
     validation_result = document.getElementById("validation-result")
+    validation_tooltip = document.getElementById("validation-tooltip")
 
     upload_success.hidden = true;
-    username.value = `Ryszard${Math.floor((Math.random() * 10000) % 10000)}`
+
+    const storage = window.localStorage;
+    default_username = storage.getItem(MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR)
+    if(default_username !== null){
+        username.value = default_username
+    } else {
+        const names = [
+            "Ryszard",
+            "KamilPatryk",
+            "Miśka",
+            "DawidJasper",
+            "Aro",
+            "Boljer",
+            "Tubson"
+        ]
+        const name = names[Math.floor(Math.random() * names.length)]
+        username.value = `${name}${Math.floor((Math.random() * 10000) % 10000)}`
+        storage.setItem(MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR, username.value)
+    }
 
     document.getElementById("username-input").onclick = () => {
         upload_error.innerText = ""
@@ -120,9 +161,16 @@ window.onload = (_) => {
 
 const validateUsername = () => {
     let name = username.value;
-    if (name === "" || (name.length < 5 || name.length > 30)) {
-        validation_result.innerText = "❌"
+    validation_result.innerText = "❌"
+    if (name === "") {
+        validation_tooltip.innerText = "username cannot be empty"
+    } else if (name.length < 5 || name.length > 30) {
+        validation_tooltip.innerText = "username must be at least 5 and at most 30 characters long"
+    } else if (/\s/g.test(name)) {
+        validation_tooltip.innerText = "username cannot contain whitespace"
     } else {
+        validation_tooltip.innerText = "username OK"
         validation_result.innerText = "✔️"
+        window.localStorage.setItem(MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR, name)
     }
 }

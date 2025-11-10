@@ -105,11 +105,13 @@
         <div class="left">
             <form>
                 <label for="username-input">Username:</label><br>
-                <input id="username-input" type="text" id="username-input" value="Ryszard" maxlength="30"
-                minlength="5" oninput="validateUsername()"></input><span style="margin-left: 5px;" id="validation-result"></span>
+                <input id="username-input" type="text" id="username-input" value="Ryszard" maxlength="30" minlength="5"
+                    oninput="validateUsername()"></input>
+                <div class="tooltip"><span class="tooltiptext" id="validation-tooltip"></span><span style="margin-left: 5px;"
+                    id="validation-result"></span></div>
             </form>
             <p id="upload-error"></p>
-            <p id="upload-success" style="color: violet;" >Score submitted!</p>
+            <p id="upload-success" style="color: violet;">Score submitted!</p>
         </div>
         <div class="center">
             <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=0></canvas>
