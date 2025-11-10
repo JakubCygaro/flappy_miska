@@ -5,6 +5,7 @@ project(Miska)
 set(BUILD_TYPES Debug Release)
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_EXPORT_COMPILE_COMMANDS YES)
+set (BACKEND_ADDRESS "http://localhost:8080")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
@@ -84,6 +85,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
             ${CMAKE_SOURCE_DIR}/web/scripts.js
             $<TARGET_FILE_DIR:Miska>/
         )
+        configure_file(${CMAKE_SOURCE_DIR}/web/backend_addr.js.in ${CMAKE_BINARY_DIR}/website/backend_addr.js @ONLY)
 else()
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)
