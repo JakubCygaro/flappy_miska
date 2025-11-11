@@ -483,7 +483,7 @@ std::optional<Game::State> Game::update()
 #ifdef __EMSCRIPTEN__
             static Uint64 last_heartbeat = 0;
             Uint64 current_frame = SDL_GetTicks64();
-            if (current_frame - last_heartbeat >= 1000 * 60 * 1) {
+            if (current_frame - last_heartbeat >= 1000 * 60 * 3) {
                 last_heartbeat = current_frame;
                 heartbeat();
             }
