@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.15...3.30)
 project(Miska)
 
 set(BUILD_TYPES Debug Release)
-set (CMAKE_CXX_STANDARD 20)
-set (CMAKE_EXPORT_COMPILE_COMMANDS YES)
-set (BACKEND_ADDRESS "http://localhost:8080")
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
+option(BACKEND_ADDRESS "Backend address that will be used by the flappy miska frontent" "127.0.0.1")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
