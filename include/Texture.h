@@ -2,8 +2,10 @@
 #define TEXTURE_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_rect.h>
 #include <memory>
 #include "Font.h"
+#include "Vector2.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -24,6 +26,8 @@ public:
 	~Texture();
 	int get_width() const;
 	int get_height() const;
+    void set_width(const int& w);
+    void set_height(const int& h);
 	SDL_Texture* get_texture() const;
 	Texture clone() const;
 };

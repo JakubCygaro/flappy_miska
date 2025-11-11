@@ -44,6 +44,11 @@
 #define OBSTACLE_VEL -5
 #define OBSTACLE_SPACING_SCALE 5
 #define OBSTACLE_WIDTH_SCALE 1.1
+#ifdef __EMSCRIPTEN__
+#define UPLOAD_SCORE_BUTTON "upload_score_button"
+#define PERSONAL_TOP_SCORE "personal_top_score"
+#define BEST_TEXT "bext_txt"
+#endif
 
 struct KeyEventData {
 	enum class Kind {

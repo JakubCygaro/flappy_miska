@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.15...3.30)
 project(Miska)
 
 set(BUILD_TYPES Debug Release)
-set (CMAKE_CXX_STANDARD 20)
-set (CMAKE_EXPORT_COMPILE_COMMANDS YES)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS YES)
+option(BACKEND_ADDRESS "Backend address that will be used by the flappy miska frontent" "127.0.0.1")
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
@@ -68,16 +69,23 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
     set_property(TARGET Miska
         APPEND PROPERTY LINK_DEPENDS ${shellHtml}
     )
-    add_custom_target(copy_styles ALL
+    add_custom_target(copyWebData
+        ALL
         DEPENDS ${CMAKE_SOURCE_DIR}/web/styles.css
+        DEPENDS ${CMAKE_SOURCE_DIR}/web/scripts.js
     )
-    add_custom_command(TARGET copy_styles
+    add_custom_command(TARGET copyWebData
         PRE_BUILD
         COMMAND cmake
         ARGS -E copy_if_different
             ${CMAKE_SOURCE_DIR}/web/styles.css
             $<TARGET_FILE_DIR:Miska>/
+        COMMAND cmake
+        ARGS -E copy_if_different
+            ${CMAKE_SOURCE_DIR}/web/scripts.js
+            $<TARGET_FILE_DIR:Miska>/
         )
+        configure_file(${CMAKE_SOURCE_DIR}/web/backend_addr.js.in ${CMAKE_BINARY_DIR}/website/backend_addr.js @ONLY)
 else()
     find_package(SDL2 REQUIRED)
     find_package(SDL2_image REQUIRED)

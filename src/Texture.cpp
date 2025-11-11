@@ -50,6 +50,12 @@ int Texture::get_width() const
 {
     return this->m_width;
 }
+void Texture::set_width(const int& w) {
+    this->m_width = w;
+}
+void Texture::set_height(const int& h) {
+    this->m_height = h;
+}
 
 SDL_Texture* Texture::get_texture() const
 {
