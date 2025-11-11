@@ -2,11 +2,12 @@ const MISKA_PERSONAL_BEST_LOCAL_STORAGE_VAR = "miskaPersonalBest"
 const MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR = "miskaDefaultUsername"
 const LEADERBOARD_FETCH_AMOUNT = 15
 
-var upload_error = null;
-var upload_success = null;
+var uploadError = null;
+var uploadSuccess = null;
 var username = null;
-var validation_result = null;
-var validation_tooltip = null;
+var validationResult = null;
+var validationTooltip = null;
+var suppressHeartbeat = false;
 
 const registerGameImpl = async () => {
     const response = await fetch(API_ADDRESS_PORT + "/register_game", {
@@ -17,9 +18,10 @@ const registerGameImpl = async () => {
         },
     })
     if (response.ok) {
-        console.log("got session cookie")
+        suppressHeartbeat = false;
     } else {
         console.error("failed to register game start")
+        suppressHeartbeat = true;
     }
 }
 
@@ -38,8 +40,8 @@ const registerGameEndImpl = async () => {
     }
 }
 const uploadScoreImpl = async (score) => {
-    upload_error.innerText = ""
-    upload_success.hidden = true;
+    uploadError.innerText = ""
+    uploadSuccess.hidden = true;
     let name = document.getElementById("username-input").value;
     const response = await fetch(API_ADDRESS_PORT + "/upload_score", {
         method: "POST",
@@ -53,9 +55,9 @@ const uploadScoreImpl = async (score) => {
         })
     })
     if (response.ok) {
-        upload_success.hidden = false;
+        uploadSuccess.hidden = false;
         setTimeout(async () => {
-            upload_success.hidden = true;
+            uploadSuccess.hidden = true;
         }, 1000)
         await fetchLeaderboard();
     } else {
@@ -65,15 +67,16 @@ const uploadScoreImpl = async (score) => {
             return;
         }
         if (body.kind === "validation") {
-            upload_error.innerText = body.message
+            uploadError.innerText = body.message
         }
         if (body.kind === "unregistered-game-start") {
-            upload_error.innerText = "you must start a new game"
+            uploadError.innerText = "you must start a new game"
         }
     }
 }
 
 const heartbeatImpl = async () => {
+    if (suppressHeartbeat) return;
     const response = await fetch(API_ADDRESS_PORT + "/heartbeat", {
         method: "POST",
         credentials: "include",
@@ -125,13 +128,13 @@ const fetchLeaderboard = async () => {
 
 window.onload = (_) => {
     fetchLeaderboard();
-    upload_error = document.getElementById("upload-error")
-    upload_success = document.getElementById("upload-success")
+    uploadError = document.getElementById("upload-error")
+    uploadSuccess = document.getElementById("upload-success")
     username = document.getElementById("username-input")
-    validation_result = document.getElementById("validation-result")
-    validation_tooltip = document.getElementById("validation-tooltip")
+    validationResult = document.getElementById("validation-result")
+    validationTooltip = document.getElementById("validation-tooltip")
 
-    upload_success.hidden = true;
+    uploadSuccess.hidden = true;
 
     const storage = window.localStorage;
     default_username = storage.getItem(MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR)
@@ -153,23 +156,23 @@ window.onload = (_) => {
     }
 
     document.getElementById("username-input").onclick = () => {
-        upload_error.innerText = ""
-        upload_success.hidden = true
+        uploadError.innerText = ""
+        uploadSuccess.hidden = true
     };
 }
 
 const validateUsername = () => {
     let name = username.value;
-    validation_result.innerText = "❌"
+    validationResult.innerText = "❌"
     if (name === "") {
-        validation_tooltip.innerText = "username cannot be empty"
+        validationTooltip.innerText = "username cannot be empty"
     } else if (name.length < 5 || name.length > 30) {
-        validation_tooltip.innerText = "username must be at least 5 and at most 30 characters long"
+        validationTooltip.innerText = "username must be at least 5 and at most 30 characters long"
     } else if (/\s/g.test(name)) {
-        validation_tooltip.innerText = "username cannot contain whitespace"
+        validationTooltip.innerText = "username cannot contain whitespace"
     } else {
-        validation_tooltip.innerText = "username OK"
-        validation_result.innerText = "✔️"
+        validationTooltip.innerText = "username OK"
+        validationResult.innerText = "✔️"
         window.localStorage.setItem(MISKA_DEFAULT_USERNAME_LOCAL_STORAGE_VAR, name)
     }
 }
